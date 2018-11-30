@@ -17,14 +17,17 @@ module EnumAttributesValidation
       def check_enum_invalid_attributes
         if enum_invalid_attributes.present?
           enum_invalid_attributes.each do |key, opts|
+            key_string = key.to_s
+            valid_values = self.class.send(key.to_s.pluralize).keys.sort.join(', ')
             if opts[:message]
               self.errors.add(:base, opts[:message])
             else
-              self.errors.add(key, :invalid_enum, value: opts[:value], valid_values: self.class.send(key.to_s.pluralize).keys.sort.join(', '), default: "value provided (#{opts[:value]}) is invalid")
+              self.errors.add(key, :invalid_enum, value: opts[:value], valid_values: valid_values, default: "The #{key_string} provided '#{opts[:value]}' isn't valid. Valid #{key_string.pluralize} are: #{valid_values}")
             end
           end
         end
       end
+
   end
 
   class_methods do
